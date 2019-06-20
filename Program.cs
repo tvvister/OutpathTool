@@ -11,16 +11,16 @@ namespace OutputPathTool
     {
         static void Main(string[] args)
         {
-            var filePaths = args[0].Split('\n')
-                .Select(path => Path.GetFullPath(path))
+            var filePaths = File.ReadAllText("paths.txt")
+                .Split('\n')
+                .Select(path => Path.GetFullPath(path.Trim('\\', '/', ' ', '\r', '\n', '"')))
                 .ToArray();
 
             var startUpPath = Path.GetFullPath(Environment.CurrentDirectory);
 
             var cancellationTokenSource = new CancellationTokenSource();
-            _ = HandleFilesAsync(filePaths, startUpPath, cancellationTokenSource.Token);
-
-            
+            Console.WriteLine("Press ESC to exit");
+            _ = HandleFilesAsync(filePaths, startUpPath, cancellationTokenSource.Token);            
 
             while (true)
             {
@@ -52,6 +52,8 @@ namespace OutputPathTool
                     Console.Error.WriteLine(exception);
                 }
             }
+            Console.WriteLine("Operation completed");
+            Console.WriteLine("Press ESC to exit");
         }
 
         private static Task HandleFileAsync(string path, string startUpPath)
